@@ -4,6 +4,23 @@
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
+//Autowired: Direct bean references
+//
+//@Resource	javax.annotation	Java
+//@Inject	javax.inject	Java
+//@Qualifier	javax.inject	Java
+//@Autowired	org.springframework.bean.factory	Spring
+//
+//@Autowired and @Inject
+//Matches by Type
+//Restricts by Qualifiers
+//Matches by Name
+//@Resource
+//Matches by Name
+//Matches by Type
+//Restricts by Qualifiers (ignored if match is found by name)
+//
  @Configuration
  public class AppConfig {
      @Inject DataSource dataSource;
@@ -42,6 +59,12 @@ public class AppConfig {
  }
  
 //PropertySource with Value
+import org.springframework.beans.factory.annotation.Value;
+//Annotaion at field or method/constructor parameter level to indicate a default value expression for the affected argument.
+import org.springframework.beans.factory.annotation.Qualifier;
+//used on a field or parameter as a qualifier for candidate beans when autowiring
+import org.springframework.beans.factory.annotation.Required;
+//Marks a method as 'required': the setter method must be configured to be dependency-injected with a value
 @Configuration
 @PropertySource("classpath:/com/xxx/app.properties")
 public class MyConfig {
