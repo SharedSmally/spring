@@ -1,0 +1,45 @@
+http://projects.spring.io/spring-boot/
+//starter-xxx
+//org.springframework.boot.autoconfigure.xxx
+
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.2.5.RELEASE</version>
+</parent>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+
+//////////////////////////////////////////
+//org.springframework.boot.autoconfigure.AutoConfigureAfter; AutoConfigureAfter; 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMapping
+@Controller
+@EnableAutoConfiguration
+public class SampleController {
+    @RequestMapping("/")
+    @ResponseBody
+    String home() {
+        return "Hello World!";
+    }
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(SampleController.class, args);
+    }
+}
+//////////////////////////////////////////
+
+//////////////////////////////////////////
+@Target(value=TYPE)
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
+public @interface SpringBootApplication
