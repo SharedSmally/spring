@@ -1,0 +1,95 @@
+//http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/package-summary.html
+//Configuration with Bean; 
+//Lazy	Indicates whether a bean is to be lazily initialized.
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+ @Configuration
+ public class AppConfig {
+     @Inject DataSource dataSource;
+
+     @Bean
+     public MyBean myBean() {
+         return new MyBean(dataSource);
+     }
+
+     @Configuration
+     static class DatabaseConfig {
+         @Bean
+         DataSource dataSource() {
+             return new EmbeddedDatabaseBuilder().build();
+         }
+     }
+ }
+
+import org.springframework.context.annotation.Import;
+//Import	Indicates one or more @Configuration classes to import.
+//ImportResource	Indicates one or more resources containing bean definitions to import.
+//DependsOn	Beans on which the current bean depends.
+//Profile	 Indicates a component is eligible for registration when one or more specified profiles are active.
+//Scope	 with @Component, indicates the name of a scope to use for instances of the annotated type.
+//Conditional	Indicates that a component is only eligible for registration when all specified conditions match.
+@Configuration
+@Import(DatabaseConfig.class)
+public class AppConfig {
+     @Inject DatabaseConfig dataConfig;
+
+     @Bean
+     public MyBean myBean() {
+         // reference the dataSource() bean method
+         return new MyBean(dataConfig.dataSource());
+     }
+ }
+ 
+//PropertySource with Value
+@Configuration
+@PropertySource("classpath:/com/xxx/app.properties")
+public class MyConfig {
+    @Value("${bean.name}") 
+    String beanName;
+  
+    @Bean(primary=Primary.TRUE)
+    public Service myService() {
+        return new Service();
+    }
+
+    @Bean
+    public Service backupService() {
+        return new Service();
+    }
+}
+////////////////////////////////////////////////////////
+import org.springframework.stereotype.Component;
+//Controller, Repository, Service are specified Components
+@Component
+public class FooService {
+     private FooRepository fooRepository;
+
+     @Autowired
+     public FooService(FooRepository fooRepository) {
+         this.fooRepository = fooRepository;
+     }
+ }
+
+@Component
+public class JdbcFooRepository {
+     public JdbcFooService(DataSource dataSource) {
+         // ...
+     }
+ }
+
+import org.springframework.context.annotation.Primary;
+@Primary
+@Component
+public class HibernateFooRepository {
+     public HibernateFooService(SessionFactory sessionFactory) {
+         // ...
+     }
+}
+
+import org.springframework.context.annotation.ComponentScan;
+@ComponentScan("com.xxx.app.services") //auto Components under package
+JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class);
+//JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class, YourConfig.class); //multiple config
+Service service1 = context.getBean(Service.class); // returns the myService() primary bean
+Service service2 = context.getBean(Service.class, "backupService"); //return backupService() for ambiguity.
